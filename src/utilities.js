@@ -47,3 +47,17 @@ export function getRandomElement(array) {
 export function convertPositionToIndex(row, column) {
     return row * PLAYFIELD_COLUMNS + column;
 }
+
+export function rotateMatrix(matrix) {
+    const L = matrix.length;
+    const rotatedMatrix = [];
+
+    for (let i = 0; i < L; i++) {
+        rotatedMatrix[i] = [];
+        for (let j = 0; j < L; j++) {
+            rotatedMatrix[i][j] = matrix[L - j - 1][i]
+        }
+    }
+
+    return rotatedMatrix;
+}

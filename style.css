@@ -23,6 +23,11 @@ body {
     padding: 3px;
     border-radius: 5px;
     background-color: #494949;
+    margin-right: 20px;
+}
+
+.grid.game-over {
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .grid>div {
@@ -31,6 +36,10 @@ body {
     width: var(--cell-size);
     background-color: black;
     border-radius: 2px;
+}
+
+.grid>div.ghost {
+    background-color: rgba(0, 0, 0, 0.45);
 }
 
 .grid>div.I {
@@ -59,4 +68,26 @@ body {
 
 .grid>div.S {
     background-color: #36dc07;
+}
+
+.grid>div.I,
+.grid>div.O,
+.grid>div.T,
+.grid>div.L,
+.grid>div.J,
+.grid>div.Z,
+.grid>div.S {
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0),
+    inset -2px -2px 1px rgba(0, 0, 0, 0.73);
+}
+
+/*--------КНОПКИ-----------------------------------------------------------*/
+.buttons > button {
+    display: block;
+    width: 100px;
+    height: 30px;
+}
+
+.buttons > button:not(:last-child) {
+    margin-bottom: 15px;
 }

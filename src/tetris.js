@@ -12,7 +12,8 @@ export class Tetris {
         this.playField;
         this.tetromino;
         this.isGameOver = false;
-        this.isStart = false;
+        this.stateGame = false;
+        this.ghostHelp = false;
         this.init();
     }
 
@@ -25,6 +26,9 @@ export class Tetris {
         this.playField = new Array(PLAYFIELD_ROWS).fill()
             .map(() => new Array(PLAYFIELD_COLUMNS).fill(0));
     }
+
+    // clearPlayField() {
+    // }
 
     generateTetromino() {
         const name = getRandomElement(TETROMINO_NAMES);
@@ -47,6 +51,7 @@ export class Tetris {
 
     moveTetrominoDown() {
         this.tetromino.row += 1;
+
         if (!this.isValid()) {
             this.tetromino.row -=1;
             this.placeTetromino();
@@ -55,6 +60,7 @@ export class Tetris {
 
     moveTetrominoLeft() {
         this.tetromino.column -= 1;
+
         if (!this.isValid()) {
             this.tetromino.column +=1;
         } else {
@@ -64,6 +70,7 @@ export class Tetris {
 
     moveTetrominoRight() {
         this.tetromino.column += 1;
+
         if (!this.isValid()) {
             this.tetromino.column -=1;
         } else {
@@ -137,6 +144,7 @@ export class Tetris {
 
     findFilledRows() {
         const filledRows = [];
+
         for (let row = 0; row < PLAYFIELD_ROWS; row++) {
             if (this.playField[row].every(cell => Boolean(cell))) {
                 filledRows.push(row);

@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "CustomMinecraftFont";
+    src: url("font/minecraft.ttf");
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -12,7 +17,8 @@ body {
     height: 100vh;
     background: #1a1a1a;
     user-select: none;
-    font-family: Arial, sans-serif;
+    font-family: "CustomMinecraftFont", sans-serif;
+    text-transform: uppercase;
 }
 
 .grid {
@@ -28,6 +34,16 @@ body {
 
 .grid.game-over {
     background-color: rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+.grid.game-over::after {
+    content: 'КОНЕЦ!';
+    color: #d2d2d2;
+    position: absolute;
+    top: 45%;
+    left: 35%;
+    font-size: 30px;
 }
 
 .grid>div {
@@ -39,7 +55,7 @@ body {
 }
 
 .grid>div.ghost {
-    background-color: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.45);
 }
 
 .grid>div.I {
@@ -81,13 +97,56 @@ body {
     inset -2px -2px 1px rgba(0, 0, 0, 0.73);
 }
 
-/*--------КНОПКИ-----------------------------------------------------------*/
+.grid.game-over>div.I,
+.grid.game-over>div.O,
+.grid.game-over>div.T,
+.grid.game-over>div.L,
+.grid.game-over>div.J,
+.grid.game-over>div.Z,
+.grid.game-over>div.S {
+    background: rgba(0, 0, 0, 0);
+}
+
+/*--------КНОПКИ/MENU-----------------------------------------------------------*/
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+}
+
+.menu>.menu-info {
+    position: absolute;
+    top: 22px;
+}
+
+.menu-info>h1 {
+    font-size: 38px;
+    justify-self: flex-start;
+    margin-bottom: 20px;
+}
+
+.menu-info>p {
+    align-self: flex-start;
+    color: #d2d2d2;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
 .buttons > button {
     display: block;
-    width: 100px;
-    height: 30px;
+    width: 210px;
+    height: 45px;
+    font-family: "CustomMinecraftFont", sans-serif;
+    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: bolder;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .buttons > button:not(:last-child) {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }

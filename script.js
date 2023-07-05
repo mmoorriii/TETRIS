@@ -5,10 +5,27 @@ let requestId;
 let timeoutId;
 const tetris = new Tetris();
 const cells = document.querySelectorAll('.grid>div');
+const start = document.querySelector('#start');
+const ghost = document.querySelector('#ghost');
 
 initKeydown();
 
-moveDown();
+startGame();
+
+//--------------------------------------------------------------------------------
+function startGame () {
+    start.addEventListener('click', () => {
+        if (!tetris.stateGame) {
+            moveDown();
+            tetris.stateGame = true;
+            start.innerHTML = 'ПАУЗА';
+        } else {
+            stopLoop();
+            tetris.stateGame = false;
+            start.innerHTML = 'ПРОДОЛЖИТЬ';
+        }
+    })
+}
 
 //--управление------------------------------------------------------------------------------------
 function initKeydown() {
@@ -19,21 +36,32 @@ function onKeydown(event) {
     switch (event.key.toLowerCase()) {
         case 'w':
         case 'ц':
-        case 'ArrowUp':
             rotate();
             break;
         case 's':
         case 'ы':
-        case 'ArrowDown':
             moveDown();
             break;
         case 'a':
         case 'ф':
-        case 'ArrowLeft':
             moveLeft();
             break;
         case 'd':
         case 'в':
+            moveRight();
+            break;
+    }
+
+    switch (event.key) {
+        case 'ArrowUp':
+            rotate();
+            break;
+        case 'ArrowDown':
+            moveDown();
+            break;
+        case 'ArrowLeft':
+            moveLeft();
+            break;
         case 'ArrowRight':
             moveRight();
             break;
@@ -46,9 +74,7 @@ function moveDown() {
     stopLoop();
     startLoop();
 
-    if (tetris.isGameOver) {
-        gameOver();
-    }
+    if (tetris.isGameOver) gameOver();
 }
 
 function moveLeft() {
@@ -81,6 +107,14 @@ function draw() {
     drawPlayField();
     drawTetromino();
     drawGhostTetromino();
+    // ghost.addEventListener('click', () => {
+    //     if (!tetris.ghostHelp) {
+    //         drawGhostTetromino();
+    //         tetris.ghostHelp = true;
+    //     } else {
+    //         tetris.ghostHelp = false;
+    //     }
+    // })
 }
 
 function drawPlayField() {
@@ -113,6 +147,7 @@ function drawTetromino() {
 
 function drawGhostTetromino() { //----------------------------тень
     const tetrominoMatrixSize = tetris.tetromino.matrix.length;
+
     for ( let row = 0; row < tetrominoMatrixSize; row++) {
         for (let column = 0; column < tetrominoMatrixSize; column++) {
             if (!tetris.tetromino.matrix[row][column]) continue;
@@ -127,6 +162,8 @@ function drawGhostTetromino() { //----------------------------тень
 //-----------------------------------------------------------------------------------
 function gameOver () {
     stopLoop();
+    tetris.stateGame = false;
+    start.innerHTML = 'СТАРТ';
     document.removeEventListener('keydown', onKeydown);
     document.querySelector('.grid').classList.add('game-over');
 }

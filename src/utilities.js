@@ -39,9 +39,21 @@ export const TETROMINOES = {
     ]
 };
 
+let previousElement = null;
+
 export function getRandomElement(array) {
-    const randomIndex = Math.floor(Math.random() * array.length);
-    return array[randomIndex];
+    let randomIndex = Math.floor(Math.random() * array.length);
+    let element = array[randomIndex];
+
+    //--повторная генерация фигуры пока предыдущая фигура совпадает с текущей
+    while (element === previousElement) {
+        randomIndex = Math.floor(Math.random() * array.length);
+        element = array[randomIndex];
+    }
+
+    previousElement = element;
+
+    return element;
 }
 
 export function convertPositionToIndex(row, column) {

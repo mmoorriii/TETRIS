@@ -13,7 +13,9 @@ export class Tetris {
         this.tetromino;
         this.isGameOver = false;
         this.stateGame = false;
-        this.ghostHelp = false;
+        this.ghostTetromino = false;
+        this.score = 0;
+        this.level = 1;
         this.init();
     }
 

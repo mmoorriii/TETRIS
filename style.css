@@ -10,17 +10,28 @@
     overflow: hidden;
 }
 
-body {
+.wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
     height: 100vh;
-    background: #1a1a1a;
+    background: rgb(26, 26, 26);
     user-select: none;
     font-family: "CustomMinecraftFont", sans-serif;
     text-transform: uppercase;
+    position: relative;
 }
 
+.background {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6) url("./img/8406757.gif") center / cover no-repeat;
+    background-blend-mode: multiply;
+    position: absolute;
+}
+
+/*-------------------------------------------------------------------------------------------*/
 .grid {
     display: grid;
     grid-template-columns: repeat(10, auto);
@@ -28,26 +39,29 @@ body {
     gap: 2px;
     padding: 3px;
     border-radius: 5px;
-    background-color: #494949;
+    background: #494949;
     margin-right: 20px;
+    position: relative;
+    z-index: 999;
 }
 
 .grid.game-over {
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.6);
     position: relative;
 }
 
 .grid.game-over::after {
-    content: 'КОНЕЦ!';
+    content: 'THE END!';
     color: #d2d2d2;
     position: absolute;
-    top: 45%;
-    left: 35%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 30px;
 }
 
 .grid>div {
-    --cell-size: min(4.5vh, 7.5vw);
+    --cell-size: min(4.5dvh, 6.5dvw);
     height: var(--cell-size);
     width: var(--cell-size);
     background-color: black;
@@ -119,34 +133,95 @@ body {
 
 .menu>.menu-info {
     position: absolute;
-    top: 22px;
+    top: 3.5%;
 }
 
 .menu-info>h1 {
     font-size: 38px;
     justify-self: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    white-space: nowrap;
 }
 
 .menu-info>p {
     align-self: flex-start;
     color: #d2d2d2;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 20px;
 }
 
 .buttons > button {
     display: block;
     width: 210px;
-    height: 45px;
+    height: 50px;
     font-family: "CustomMinecraftFont", sans-serif;
     text-transform: uppercase;
     font-size: 20px;
     font-weight: bolder;
     border-radius: 5px;
     cursor: pointer;
+    border: 5px ridge #d2d2d2;
+    background: rgb(40 45 27);
+    color: #d2d2d2;
+    transition: background 0.3s ease, border 0.2s ease;
+}
+
+.buttons > button:hover {
+    background: rgb(0, 0, 0);
+}
+
+.buttons > button:active {
+    border: 4px ridge #d2d2d2;
+}
+
+.buttons > button:focus {
+    outline: none;
 }
 
 .buttons > button:not(:last-child) {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+}
+
+/*------счет и уровень-----------------------------------------------------*/
+.count>span,
+.level>span {
+    margin-left: 10px;
+}
+
+/*------аудио---------------------------------------------------------------*/
+.audio{
+    position: absolute;
+    z-index: 999;
+    right: 20px;
+    bottom: 20px;
+    width: 45px;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.audio>svg>#line-sound {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.audio.on>svg>#line-sound {
+    opacity: 1;
+}
+
+.audio>.line {
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    height: 5px;
+    background: #f30000;
+    left: -5px;
+    top: 20px;
+    border-radius: 5px;
+    transform: rotate(-45deg);
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.audio.on>.line {
+    opacity: 0;
 }

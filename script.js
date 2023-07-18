@@ -13,19 +13,125 @@ initKeydown();
 startGame();
 
 //--------------------------------------------------------------------------------
+let allowMoveLeft = true;
+let allowMoveRight = true;
+let allowMoveRotate = true;
+let allowMoveDown = true;
+
 function startGame () {
     start.addEventListener('click', () => {
         if (!tetris.stateGame) {
+            allowMoveDown = true;
             moveDown();
             tetris.stateGame = true;
-            start.innerHTML = 'ПАУЗА';
+            start.innerHTML = 'STOP';
+            allowMoveLeft = true;
+            allowMoveRight = true;
+            allowMoveRotate = true;
         } else {
+            allowMoveDown = false;
             stopLoop();
             tetris.stateGame = false;
-            start.innerHTML = 'ПРОДОЛЖИТЬ';
+            start.innerHTML = 'START';
+            allowMoveLeft = false;
+            allowMoveRight = false;
+            allowMoveRotate = false;
         }
     })
 }
+
+//-------счет и уровень--------------------------------------------------------------------------------
+let score = document.querySelector('.count>span');
+let level = document.querySelector('.level>span');
+score.innerHTML = tetris.score;
+
+
+function updateLevel() {
+    level.innerHTML = tetris.level;
+}
+
+updateLevel();
+
+// let clearedRows = 0;
+//
+// function removeFilledRows() {
+//     // Проверка и удаление заполненных рядов
+//     for (let row = 0; row < PLAYFIELD_ROWS; row++) {
+//         let isRowComplete = true;
+//
+//         for (let column = 0; column < PLAYFIELD_COLUMNS; column++) {
+//             if (!tetris.playField[row][column]) {
+//                 isRowComplete = false;
+//                 break;
+//             }
+//         }
+//
+//         if (isRowComplete) {
+//             completedRows++;
+//             tetris.playField.splice(row, 1);
+//             tetris.playField.unshift(new Array(PLAYFIELD_COLUMNS).fill(0));
+//         }
+//     }
+//
+//     // clearedRows++; // Увеличение счетчика убранных рядов
+// }
+
+// removeFilledRows();
+
+// console.log("Количество убранных рядов: " + clearedRows);
+
+
+let completedRows = 0;
+function checkRows() {
+    for (let row = PLAYFIELD_ROWS - 1; row >= 0; row--) {
+        let isRowComplete = true;
+
+        for (let column = 0; column < PLAYFIELD_COLUMNS; column++) {
+            if (tetris.playField[row][column] === 0) {
+                isRowComplete = false;
+                break;
+            }
+        }
+
+        if (isRowComplete) {
+            completedRows++;
+            tetris.playField.splice(row, 1);
+            tetris.playField.unshift(new Array(PLAYFIELD_COLUMNS).fill(0));
+        }
+    }
+
+    if (completedRows > 0) {
+        updateScore(completedRows);
+    }
+
+    console.log('убрано рядов: ' + completedRows);
+}
+checkRows();
+
+function updateScore(completedRows) {
+    let scoreToAdd = 0;
+    let mainScore = 0;
+
+    switch (completedRows) {
+        case 1:
+            scoreToAdd = 100;
+            break;
+        case 2:
+            scoreToAdd = 300;
+            break;
+        case 3:
+            scoreToAdd = 700;
+            break;
+        case 4:
+            scoreToAdd = 1500;
+            break;
+    }
+
+    mainScore += scoreToAdd;
+    console.log(mainScore);
+}
+
+updateScore();
 
 //--управление------------------------------------------------------------------------------------
 function initKeydown() {
@@ -33,35 +139,20 @@ function initKeydown() {
 }
 
 function onKeydown(event) {
-    switch (event.key.toLowerCase()) {
-        case 'w':
-        case 'ц':
-            rotate();
-            break;
-        case 's':
-        case 'ы':
-            moveDown();
-            break;
-        case 'a':
-        case 'ф':
-            moveLeft();
-            break;
-        case 'd':
-        case 'в':
-            moveRight();
-            break;
-    }
-
-    switch (event.key) {
+    switch (event.code) {
+        case 'KeyW':
         case 'ArrowUp':
             rotate();
             break;
+        case 'KeyS':
         case 'ArrowDown':
             moveDown();
             break;
+        case 'KeyA':
         case 'ArrowLeft':
             moveLeft();
             break;
+        case 'KeyD':
         case 'ArrowRight':
             moveRight();
             break;
@@ -69,6 +160,7 @@ function onKeydown(event) {
 }
 
 function moveDown() {
+    if (!allowMoveDown) return;
     tetris.moveTetrominoDown();
     draw();
     stopLoop();
@@ -78,16 +170,19 @@ function moveDown() {
 }
 
 function moveLeft() {
+    if (!allowMoveLeft) return;
     tetris.moveTetrominoLeft();
     draw();
 }
 
 function moveRight() {
+    if (!allowMoveRight) return;
     tetris.moveTetrominoRight();
     draw();
 }
 
 function rotate() {
+    if (!allowMoveRotate) return;
     tetris.rotateTetromino();
     draw();
 }
@@ -106,15 +201,8 @@ function draw() {
     cells.forEach(cell => cell.removeAttribute('class'));
     drawPlayField();
     drawTetromino();
-    drawGhostTetromino();
-    // ghost.addEventListener('click', () => {
-    //     if (!tetris.ghostHelp) {
-    //         drawGhostTetromino();
-    //         tetris.ghostHelp = true;
-    //     } else {
-    //         tetris.ghostHelp = false;
-    //     }
-    // })
+    // stateGhostTetromino();
+    // drawGhostTetromino();
 }
 
 function drawPlayField() {
@@ -159,12 +247,48 @@ function drawGhostTetromino() { //----------------------------тень
     }
 }
 
+//--------изменение состояния тени-------------------------------------------------------------------------------------------
+// function stateGhostTetromino() {
+//     let divHasGhost = document.querySelectorAll('div>.ghost');
+//     let div = document.querySelectorAll('div');
+//
+//     console.log(divHasGhost);
+//
+//     ghost.addEventListener('click', () => {
+//         // if (!div.classList.contains('ghost') && !tetris.ghostTetromino) {
+//         //     for (let el of div) {
+//         //         el.classList.remove('.ghost');
+//         //         console.log(el);
+//         //     }
+//         //     tetris.ghostTetromino = true;
+//         // } else {
+//         //     tetris.ghostTetromino = false;
+//         //     // for (let el of divHasGhost) {
+//         //     //     el.classList.add('.ghost');
+//         //     // }
+//         // }
+//     })
+// }
+
 //-----------------------------------------------------------------------------------
 function gameOver () {
     stopLoop();
     tetris.stateGame = false;
-    start.innerHTML = 'СТАРТ';
+    start.innerHTML = 'START';
     document.removeEventListener('keydown', onKeydown);
     document.querySelector('.grid').classList.add('game-over');
 }
 
+//------button audio-----------------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', (qualifiedName, value) => {
+    let audioContainer = document.querySelector('.audio');
+    let audio = document.querySelector('#audio');
+
+    audioContainer.style.opacity = '1';
+    audio.volume = 0.4;
+
+    audioContainer.onclick = () => {
+        audioContainer.classList.toggle('on');
+        audio.muted = !audioContainer.classList.contains('on');
+    }
+})

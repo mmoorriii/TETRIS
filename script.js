@@ -7,6 +7,7 @@ const tetris = new Tetris();
 const cells = document.querySelectorAll('.grid>div');
 const start = document.querySelector('#start');
 const ghost = document.querySelector('#ghost');
+const grid = document.querySelector('.grid');
 
 initKeydown();
 
@@ -201,8 +202,7 @@ function draw() {
     cells.forEach(cell => cell.removeAttribute('class'));
     drawPlayField();
     drawTetromino();
-    // stateGhostTetromino();
-    // drawGhostTetromino();
+    drawGhostTetromino();
 }
 
 function drawPlayField() {
@@ -233,6 +233,7 @@ function drawTetromino() {
     }
 }
 
+//-----------тень---------------------------------------------------------------------------------------------------------
 function drawGhostTetromino() { //----------------------------тень
     const tetrominoMatrixSize = tetris.tetromino.matrix.length;
 
@@ -242,33 +243,16 @@ function drawGhostTetromino() { //----------------------------тень
             if (tetris.tetromino.ghostRow + row < 0) continue;
 
             const cellIndex = convertPositionToIndex(tetris.tetromino.ghostRow + row, tetris.tetromino.ghostColumn + column);
-            cells[cellIndex].classList.add('ghost');
+
+            if (grid.classList.contains('shadow-on')) cells[cellIndex].classList.add('ghost');
         }
     }
 }
 
-//--------изменение состояния тени-------------------------------------------------------------------------------------------
-// function stateGhostTetromino() {
-//     let divHasGhost = document.querySelectorAll('div>.ghost');
-//     let div = document.querySelectorAll('div');
-//
-//     console.log(divHasGhost);
-//
-//     ghost.addEventListener('click', () => {
-//         // if (!div.classList.contains('ghost') && !tetris.ghostTetromino) {
-//         //     for (let el of div) {
-//         //         el.classList.remove('.ghost');
-//         //         console.log(el);
-//         //     }
-//         //     tetris.ghostTetromino = true;
-//         // } else {
-//         //     tetris.ghostTetromino = false;
-//         //     // for (let el of divHasGhost) {
-//         //     //     el.classList.add('.ghost');
-//         //     // }
-//         // }
-//     })
-// }
+ghost.addEventListener('click', () => {
+    grid.classList.toggle('shadow-on');
+    ghost.classList.toggle('shadow-on');
+})
 
 //-----------------------------------------------------------------------------------
 function gameOver () {
@@ -277,18 +261,5 @@ function gameOver () {
     start.innerHTML = 'START';
     document.removeEventListener('keydown', onKeydown);
     document.querySelector('.grid').classList.add('game-over');
+    start.classList.add('game-over');
 }
-
-//------button audio-----------------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', (qualifiedName, value) => {
-    let audioContainer = document.querySelector('.audio');
-    let audio = document.querySelector('#audio');
-
-    audioContainer.style.opacity = '1';
-    audio.volume = 0.4;
-
-    audioContainer.onclick = () => {
-        audioContainer.classList.toggle('on');
-        audio.muted = !audioContainer.classList.contains('on');
-    }
-})

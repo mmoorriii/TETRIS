@@ -1,9 +1,18 @@
-import { Tetris } from "./src/tetris.js";
-import {convertPositionToIndex, PLAYFIELD_COLUMNS, PLAYFIELD_ROWS} from "./src/utilities.js";
+import {
+    moveTetrominoDown,
+    moveTetrominoRight,
+    moveTetrominoLeft,
+    rotateTetromino,
+    isGameOver,
+    playField,
+    tetromino
+} from "./src/tetris.js";
+
+import { convertPositionToIndex, PLAYFIELD_COLUMNS, PLAYFIELD_ROWS } from "./src/utilities.js";
+
 
 let requestId;
 let timeoutId;
-const tetris = new Tetris();
 const cells = document.querySelectorAll('.grid>div');
 const start = document.querySelector('#start');
 const ghost = document.querySelector('#ghost');
@@ -18,13 +27,14 @@ let allowMoveLeft = true;
 let allowMoveRight = true;
 let allowMoveRotate = true;
 let allowMoveDown = true;
+let stateGame = false;
 
 function startGame () {
     start.addEventListener('click', () => {
-        if (!tetris.stateGame) {
+        if (!stateGame) {
             allowMoveDown = true;
             moveDown();
-            tetris.stateGame = true;
+            stateGame = true;
             start.innerHTML = 'STOP';
             allowMoveLeft = true;
             allowMoveRight = true;
@@ -32,7 +42,7 @@ function startGame () {
         } else {
             allowMoveDown = false;
             stopLoop();
-            tetris.stateGame = false;
+            stateGame = false;
             start.innerHTML = 'START';
             allowMoveLeft = false;
             allowMoveRight = false;
@@ -42,97 +52,30 @@ function startGame () {
 }
 
 //-------счет и уровень--------------------------------------------------------------------------------
-let score = document.querySelector('.count>span');
-let level = document.querySelector('.level>span');
-score.innerHTML = tetris.score;
+let level = document.getElementById('level');
 
 
-function updateLevel() {
-    level.innerHTML = tetris.level;
-}
 
-updateLevel();
+let score = document.getElementById('score');
 
-// let clearedRows = 0;
-//
-// function removeFilledRows() {
-//     // Проверка и удаление заполненных рядов
-//     for (let row = 0; row < PLAYFIELD_ROWS; row++) {
-//         let isRowComplete = true;
-//
-//         for (let column = 0; column < PLAYFIELD_COLUMNS; column++) {
-//             if (!tetris.playField[row][column]) {
-//                 isRowComplete = false;
-//                 break;
-//             }
-//         }
-//
-//         if (isRowComplete) {
-//             completedRows++;
-//             tetris.playField.splice(row, 1);
-//             tetris.playField.unshift(new Array(PLAYFIELD_COLUMNS).fill(0));
-//         }
-//     }
-//
-//     // clearedRows++; // Увеличение счетчика убранных рядов
-// }
+score.innerHTML = parseInt(0);
 
-// removeFilledRows();
-
-// console.log("Количество убранных рядов: " + clearedRows);
-
-
-let completedRows = 0;
-function checkRows() {
-    for (let row = PLAYFIELD_ROWS - 1; row >= 0; row--) {
-        let isRowComplete = true;
-
-        for (let column = 0; column < PLAYFIELD_COLUMNS; column++) {
-            if (tetris.playField[row][column] === 0) {
-                isRowComplete = false;
-                break;
-            }
-        }
-
-        if (isRowComplete) {
-            completedRows++;
-            tetris.playField.splice(row, 1);
-            tetris.playField.unshift(new Array(PLAYFIELD_COLUMNS).fill(0));
-        }
-    }
-
-    if (completedRows > 0) {
-        updateScore(completedRows);
-    }
-
-    console.log('убрано рядов: ' + completedRows);
-}
-checkRows();
-
-function updateScore(completedRows) {
-    let scoreToAdd = 0;
-    let mainScore = 0;
-
+export function updateScore (completedRows) {
     switch (completedRows) {
         case 1:
-            scoreToAdd = 100;
+            score.innerHTML = parseInt(score.innerHTML) + 100;
             break;
         case 2:
-            scoreToAdd = 300;
+            score.innerHTML = parseInt(score.innerHTML) + 300;
             break;
         case 3:
-            scoreToAdd = 700;
+            score.innerHTML = parseInt(score.innerHTML) + 700;
             break;
         case 4:
-            scoreToAdd = 1500;
+            score.innerHTML = parseInt(score.innerHTML) + 1500;
             break;
     }
-
-    mainScore += scoreToAdd;
-    console.log(mainScore);
 }
-
-updateScore();
 
 //--управление------------------------------------------------------------------------------------
 function initKeydown() {
@@ -162,29 +105,29 @@ function onKeydown(event) {
 
 function moveDown() {
     if (!allowMoveDown) return;
-    tetris.moveTetrominoDown();
+    moveTetrominoDown();
     draw();
     stopLoop();
     startLoop();
 
-    if (tetris.isGameOver) gameOver();
+    if (isGameOver) gameOver();
 }
 
 function moveLeft() {
     if (!allowMoveLeft) return;
-    tetris.moveTetrominoLeft();
+    moveTetrominoLeft();
     draw();
 }
 
 function moveRight() {
     if (!allowMoveRight) return;
-    tetris.moveTetrominoRight();
+    moveTetrominoRight();
     draw();
 }
 
 function rotate() {
     if (!allowMoveRotate) return;
-    tetris.rotateTetromino();
+    rotateTetromino();
     draw();
 }
 
@@ -208,9 +151,9 @@ function draw() {
 function drawPlayField() {
     for (let row = 0; row < PLAYFIELD_ROWS; row++) {
         for (let column = 0; column < PLAYFIELD_COLUMNS; column++) {
-            if (!tetris.playField[row][column]) continue;
+            if (!playField[row][column]) continue;
 
-            const name = tetris.playField[row][column];
+            const name = playField[row][column];
             const cellIndex = convertPositionToIndex(row, column);
             cells[cellIndex].classList.add(name);
         }
@@ -218,16 +161,16 @@ function drawPlayField() {
 }
 
 function drawTetromino() {
-    const name = tetris.tetromino.name;
-    const tetrominoMatrixSize = tetris.tetromino.matrix.length;
+    const name = tetromino.name;
+    const tetrominoMatrixSize = tetromino.matrix.length;
 
     for (let row = 0; row < tetrominoMatrixSize; row++) {
         for (let column = 0; column < tetrominoMatrixSize; column++) {
 
-            if (!tetris.tetromino.matrix[row][column]) continue;
-            if (tetris.tetromino.row + row < 0) continue;
+            if (!tetromino.matrix[row][column]) continue;
+            if (tetromino.row + row < 0) continue;
 
-            const cellIndex = convertPositionToIndex(tetris.tetromino.row + row, tetris.tetromino.column + column);
+            const cellIndex = convertPositionToIndex(tetromino.row + row, tetromino.column + column);
             cells[cellIndex].classList.add(name);
         }
     }
@@ -235,14 +178,14 @@ function drawTetromino() {
 
 //-----------тень---------------------------------------------------------------------------------------------------------
 function drawGhostTetromino() { //----------------------------тень
-    const tetrominoMatrixSize = tetris.tetromino.matrix.length;
+    const tetrominoMatrixSize = tetromino.matrix.length;
 
     for ( let row = 0; row < tetrominoMatrixSize; row++) {
         for (let column = 0; column < tetrominoMatrixSize; column++) {
-            if (!tetris.tetromino.matrix[row][column]) continue;
-            if (tetris.tetromino.ghostRow + row < 0) continue;
+            if (!tetromino.matrix[row][column]) continue;
+            if (tetromino.ghostRow + row < 0) continue;
 
-            const cellIndex = convertPositionToIndex(tetris.tetromino.ghostRow + row, tetris.tetromino.ghostColumn + column);
+            const cellIndex = convertPositionToIndex(tetromino.ghostRow + row, tetromino.ghostColumn + column);
 
             if (grid.classList.contains('shadow-on')) cells[cellIndex].classList.add('ghost');
         }
@@ -257,9 +200,10 @@ ghost.addEventListener('click', () => {
 //-----------------------------------------------------------------------------------
 function gameOver () {
     stopLoop();
-    tetris.stateGame = false;
+    stateGame = false;
     start.innerHTML = 'START';
     document.removeEventListener('keydown', onKeydown);
     document.querySelector('.grid').classList.add('game-over');
     start.classList.add('game-over');
 }
+

@@ -7,179 +7,175 @@ import {
     rotateMatrix
 } from "./utilities.js";
 
-export class Tetris {
-    constructor() {
-        this.playField;
-        this.tetromino;
-        this.isGameOver = false;
-        this.stateGame = false;
-        this.ghostTetromino = false;
-        this.score = 0;
-        this.level = 1;
-        this.init();
+import { updateScore } from "../script.js";
+
+
+export let playField;
+export let tetromino;
+export let isGameOver = false;
+export let mainLevel = 1;
+
+function init() {
+    generatePlayField();
+    generateTetromino();
+}
+
+
+function generatePlayField() {
+    playField = new Array(PLAYFIELD_ROWS).fill()
+        .map(() => new Array(PLAYFIELD_COLUMNS).fill(0));
+}
+
+function generateTetromino() {
+    const name = getRandomElement(TETROMINO_NAMES);
+    const matrix = TETROMINOES[name];
+
+    const column = PLAYFIELD_COLUMNS / 2 - Math.floor(matrix.length / 2);
+    const row = -2;
+
+    tetromino = {
+        name,
+        matrix,
+        row,
+        column,
+        ghostColumn: column,
+        ghostRow: row
     }
 
-    init() {
-        this.generatePlayField();
-        this.generateTetromino();
+    calculateGhostPosition();
+}
+
+init();
+
+export function moveTetrominoDown() {
+    tetromino.row += 1;
+
+    if (!isValid()) {
+        tetromino.row -= 1;
+        placeTetromino();
     }
+}
 
-    generatePlayField() {
-        this.playField = new Array(PLAYFIELD_ROWS).fill()
-            .map(() => new Array(PLAYFIELD_COLUMNS).fill(0));
+export function moveTetrominoLeft() {
+    tetromino.column -= 1;
+
+    if (!isValid()) {
+        tetromino.column += 1;
+    } else {
+        calculateGhostPosition();
     }
+}
 
-    // clearPlayField() {
-    // }
+export function moveTetrominoRight() {
+    tetromino.column += 1;
 
-    generateTetromino() {
-        const name = getRandomElement(TETROMINO_NAMES);
-        const matrix = TETROMINOES[name];
+    if (!isValid()) {
+        tetromino.column -= 1;
+    } else {
+        calculateGhostPosition();
+    }
+}
 
-        const column = PLAYFIELD_COLUMNS / 2 - Math.floor(matrix.length / 2);
-        const row = -2;
+export function rotateTetromino() {
+    const oldMatrix = tetromino.matrix;
+    const rotatedMatrix = rotateMatrix(tetromino.matrix);
+    tetromino.matrix = rotatedMatrix;
 
-        this.tetromino = {
-            name,
-            matrix,
-            row,
-            column,
-            ghostColumn: column,
-            ghostRow: row
+    if (!isValid()) {
+        tetromino.matrix = oldMatrix;
+    } else {
+        calculateGhostPosition();
+    }
+}
+
+function isValid() {
+    const matrixSize = tetromino.matrix.length;
+
+    for (let row = 0; row < matrixSize; row++) {
+        for (let column = 0; column < matrixSize; column++) {
+            if (!tetromino.matrix[row][column]) continue;
+            if (isOutsideOfGameBoard(row, column)) return false;
+            if (isCollides(row, column)) return false;
         }
-
-        this.calculateGhostPosition();
     }
 
-    moveTetrominoDown() {
-        this.tetromino.row += 1;
+    return true;
+}
 
-        if (!this.isValid()) {
-            this.tetromino.row -=1;
-            this.placeTetromino();
-        }
-    }
+function isOutsideOfGameBoard(row, column) {
+    return tetromino.column + column < 0 ||
+        tetromino.column + column >= PLAYFIELD_COLUMNS ||
+        tetromino.row + row >= playField.length;
+}
 
-    moveTetrominoLeft() {
-        this.tetromino.column -= 1;
+function isCollides(row, column) {
+    return playField[tetromino.row + row]?.[tetromino.column + column]
+}
 
-        if (!this.isValid()) {
-            this.tetromino.column +=1;
-        } else {
-            this.calculateGhostPosition();
-        }
-    }
+function placeTetromino() {
+    const matrixSize = tetromino.matrix.length;
 
-    moveTetrominoRight() {
-        this.tetromino.column += 1;
-
-        if (!this.isValid()) {
-            this.tetromino.column -=1;
-        } else {
-            this.calculateGhostPosition();
-        }
-    }
-
-    rotateTetromino() {
-        const oldMatrix = this.tetromino.matrix;
-        const rotatedMatrix = rotateMatrix(this.tetromino.matrix);
-        this.tetromino.matrix = rotatedMatrix;
-
-        if (!this.isValid()) {
-            this.tetromino.matrix = oldMatrix;
-        } else {
-            this.calculateGhostPosition();
-        }
-    }
-
-    isValid() {
-        const matrixSize = this.tetromino.matrix.length;
-
-        for (let row = 0; row < matrixSize; row++) {
-            for(let column = 0; column < matrixSize; column++) {
-                if (!this.tetromino.matrix[row][column]) continue;
-                if (this.isOutsideOfGameBoard(row, column)) return false;
-                if (this.isCollides(row, column)) return false;
+    for (let row = 0; row < matrixSize; row++) {
+        for (let column = 0; column < matrixSize; column++) {
+            if (!tetromino.matrix[row][column]) continue;
+            if (isOutsideOfTopBoard(row)) {
+                isGameOver = true;
+                return;
             }
+
+            playField[tetromino.row + row][tetromino.column + column] = tetromino.name;
         }
-
-        return true;
     }
 
-    isOutsideOfGameBoard(row, column) {
-        return this.tetromino.column + column < 0 ||
-            this.tetromino.column + column >= PLAYFIELD_COLUMNS ||
-            this.tetromino.row + row >= this.playField.length;
-    }
+    processFilledRows();
+    generateTetromino();
+}
 
-    isCollides(row, column) {
-        return this.playField[this.tetromino.row + row]?.[this.tetromino.column + column]
-    }
+function isOutsideOfTopBoard (row) {
+    return tetromino.row + row < 0;
+}
 
-    placeTetromino() {
-        const matrixSize = this.tetromino.matrix.length;
+function processFilledRows() {
+    const filledLines = findFilledRows();
+    removeFilledRows(filledLines);
+}
 
-        for (let row = 0; row < matrixSize; row++) {
-            for (let column = 0; column < matrixSize; column++) {
-                if (!this.tetromino.matrix[row][column]) continue;
-                if (this.isOutsideOfTopBoard(row)) {
-                    this.isGameOver = true;
-                    return;
-                }
+function findFilledRows() {
+    const filledRows = [];
 
-                this.playField[this.tetromino.row + row][this.tetromino.column + column] = this.tetromino.name;
-            }
+    for (let row = 0; row < PLAYFIELD_ROWS; row++) {
+        if (playField[row].every(cell => Boolean(cell))) {
+            filledRows.push(row);
         }
-
-        this.processFilledRows();
-        this.generateTetromino();
     }
 
-    isOutsideOfTopBoard (row) {
-        return this.tetromino.row + row < 0;
+    return filledRows;
+}
+
+function removeFilledRows(filledRows) {
+    filledRows.forEach(row => {
+        dropRowsAbove(row);
+    })
+    updateScore(filledRows.length);
+}
+
+function dropRowsAbove(rowToDelete) {
+    for (let row = rowToDelete; row > 0; row--) {
+        playField[row] = playField[row - 1];
+    }
+    playField[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
+}
+
+//------тень-------------------------------------------------------------
+function calculateGhostPosition() {
+    const tetrominoRow = tetromino.row;
+    tetromino.row++;
+
+    while (isValid()) {
+        tetromino.row++;
     }
 
-    processFilledRows() {
-        const filledLines = this.findFilledRows();
-        this.removeFilledRows(filledLines);
-    }
-
-    findFilledRows() {
-        const filledRows = [];
-
-        for (let row = 0; row < PLAYFIELD_ROWS; row++) {
-            if (this.playField[row].every(cell => Boolean(cell))) {
-                filledRows.push(row);
-            }
-        }
-
-        return filledRows;
-    }
-
-    removeFilledRows(filledRows) {
-        filledRows.forEach(row => {
-            this.dropRowsAbove(row);
-        })
-    }
-
-    dropRowsAbove(rowToDelete) {
-        for (let row = rowToDelete; row > 0; row--) {
-            this.playField[row] = this.playField[row - 1];
-        }
-        this.playField[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
-    }
-
-    //------тень-------------------------------------------------------------
-    calculateGhostPosition() {
-        const tetrominoRow = this.tetromino.row;
-        this.tetromino.row++;
-
-        while (this.isValid()) {
-            this.tetromino.row++;
-        }
-
-        this.tetromino.ghostRow = this.tetromino.row - 1;
-        this.tetromino.ghostColumn = this.tetromino.column;
-        this.tetromino.row = tetrominoRow;
-    }
+    tetromino.ghostRow = tetromino.row - 1;
+    tetromino.ghostColumn = tetromino.column;
+    tetromino.row = tetrominoRow;
 }

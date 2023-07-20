@@ -51,30 +51,40 @@ function startGame () {
     })
 }
 
-//-------счет и уровень--------------------------------------------------------------------------------
-let level = document.getElementById('level');
+//-------уровень--------------------------------------------------------------------------------
+let levelElement = document.getElementById('level');
+let level = 1;
+let count = 0;
 
+export function updateLevel () {
+    count++;
+    if (count === 10) {
+        level++;
+        count = 0;
+    }
+    levelElement.innerHTML = level;
+}
 
+//-------счет--------------------------------------------------------------------------------
+let scoreElement = document.getElementById('score');
+let score = 0;
 
-let score = document.getElementById('score');
-
-score.innerHTML = parseInt(0);
-
-export function updateScore (completedRows) {
+export function updateScore(completedRows) {
     switch (completedRows) {
         case 1:
-            score.innerHTML = parseInt(score.innerHTML) + 100;
+            score += 100;
             break;
         case 2:
-            score.innerHTML = parseInt(score.innerHTML) + 300;
+            score += 300;
             break;
         case 3:
-            score.innerHTML = parseInt(score.innerHTML) + 700;
+            score += 700;
             break;
         case 4:
-            score.innerHTML = parseInt(score.innerHTML) + 1500;
+            score += 1500;
             break;
     }
+    scoreElement.innerHTML = score;
 }
 
 //--управление------------------------------------------------------------------------------------

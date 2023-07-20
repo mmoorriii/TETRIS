@@ -7,19 +7,20 @@ import {
     rotateMatrix
 } from "./utilities.js";
 
-import { updateScore } from "../script.js";
+import {
+    updateScore,
+    updateLevel
+} from "../script.js";
 
 
 export let playField;
 export let tetromino;
 export let isGameOver = false;
-export let mainLevel = 1;
 
 function init() {
     generatePlayField();
     generateTetromino();
 }
-
 
 function generatePlayField() {
     playField = new Array(PLAYFIELD_ROWS).fill()
@@ -47,6 +48,7 @@ function generateTetromino() {
 
 init();
 
+//------передвижение фигурок------------------------------------------------------------------------------------
 export function moveTetrominoDown() {
     tetromino.row += 1;
 
@@ -88,6 +90,7 @@ export function rotateTetromino() {
     }
 }
 
+//--------------------------------------------------------------------------------------------------------
 function isValid() {
     const matrixSize = tetromino.matrix.length;
 
@@ -164,6 +167,7 @@ function dropRowsAbove(rowToDelete) {
         playField[row] = playField[row - 1];
     }
     playField[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
+    updateLevel();
 }
 
 //------тень-------------------------------------------------------------

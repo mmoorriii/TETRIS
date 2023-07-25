@@ -112,7 +112,7 @@ function isOutsideOfGameBoard(row, column) {
 }
 
 function isCollides(row, column) {
-    return playField[tetromino.row + row]?.[tetromino.column + column]
+    return playField[tetromino.row + row]?.[tetromino.column + column];
 }
 
 function placeTetromino() {

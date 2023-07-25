@@ -39,6 +39,7 @@ export const TETROMINOES = {
     ]
 };
 
+
 let previousElement = null;
 
 export function getRandomElement(array) {
@@ -56,9 +57,11 @@ export function getRandomElement(array) {
     return element;
 }
 
+
 export function convertPositionToIndex(row, column) {
     return row * PLAYFIELD_COLUMNS + column;
 }
+
 
 export function rotateMatrix(matrix) {
     const L = matrix.length;

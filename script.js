@@ -53,15 +53,19 @@ function startGame () {
 
 //-------уровень--------------------------------------------------------------------------------
 let levelElement = document.getElementById('level');
-let level = 1;
 let count = 0;
+let level = 1;
+let baseDelay = 700;
 
 export function updateLevel () {
     count++;
+
     if (count === 10) {
         level++;
         count = 0;
+        if (baseDelay > 300) baseDelay -= 50;
     }
+
     levelElement.innerHTML = level;
 }
 
@@ -142,7 +146,7 @@ function rotate() {
 }
 
 function startLoop() { //---------------------падение фигур с задержкой 0,7с
-    timeoutId = setTimeout(() => requestId = requestAnimationFrame(moveDown), 700);
+    timeoutId = setTimeout(() => requestId = requestAnimationFrame(moveDown), baseDelay);
 }
 
 function stopLoop() { //----------------------остановка цикла падения фигур
@@ -215,5 +219,12 @@ function gameOver () {
     document.removeEventListener('keydown', onKeydown);
     document.querySelector('.grid').classList.add('game-over');
     start.classList.add('game-over');
+}
+
+//-------------------------------------------------------------------------
+const restart = document.getElementById('restart');
+
+restart.onclick = () => {
+    window.location.reload();
 }
 

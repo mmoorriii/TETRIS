@@ -70,25 +70,48 @@ export function updateLevel () {
 }
 
 //-------счет--------------------------------------------------------------------------------
-let scoreElement = document.getElementById('score');
+const scoreElement = document.getElementById('score');
+const addedPointsSpan = document.getElementById('addedPoints');
 let score = 0;
+let addedPoints = 0;
 
 export function updateScore(completedRows) {
     switch (completedRows) {
         case 1:
             score += 100;
+            addedPoints = 100;
+            addedPointsHTML();
+            addedPointsStyle();
             break;
         case 2:
             score += 300;
+            addedPoints = 300;
+            addedPointsHTML();
+            addedPointsStyle();
             break;
         case 3:
             score += 700;
+            addedPoints = 700;
+            addedPointsHTML();
+            addedPointsStyle();
             break;
         case 4:
             score += 1500;
+            addedPoints = 1500;
+            addedPointsHTML();
+            addedPointsStyle();
             break;
     }
     scoreElement.innerHTML = score;
+}
+
+function addedPointsHTML () {
+    addedPointsSpan.innerHTML = '+' + addedPoints;
+}
+
+function addedPointsStyle () {
+    addedPointsSpan.style.opacity = 1;
+    setTimeout(() => addedPointsSpan.style.opacity = 0, 1000);
 }
 
 //--управление------------------------------------------------------------------------------------
@@ -209,7 +232,18 @@ function drawGhostTetromino() { //----------------------------тень
 ghost.addEventListener('click', () => {
     grid.classList.toggle('shadow-on');
     ghost.classList.toggle('shadow-on');
+
+    const shadowOnState = grid.classList.contains('shadow-on');
+    localStorage.setItem('shadowOnState', shadowOnState);
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+    const shadowOnState = localStorage.getItem('shadowOnState');
+    if (shadowOnState === 'true') {
+        grid.classList.add('shadow-on');
+        ghost.classList.add('shadow-on');
+    }
+});
 
 //-----------------------------------------------------------------------------------
 function gameOver () {
@@ -227,4 +261,6 @@ const restart = document.getElementById('restart');
 restart.onclick = () => {
     window.location.reload();
 }
+
+//-----------------------------------------------------------------------------------
 

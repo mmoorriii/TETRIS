@@ -14,13 +14,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     background: rgb(26, 26, 26);
     user-select: none;
     font-family: "CustomMinecraftFont", sans-serif;
     text-transform: uppercase;
     position: relative;
+}
+
+@media screen and (max-width: 600px) {
+    .wrapper {
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+    }
 }
 
 .background {
@@ -61,12 +68,26 @@
     text-align: center;
 }
 
+@media screen and (max-width: 600px) {
+    .grid.game-over::after {
+        font-size: 20px;
+    }
+}
+
 .grid>div {
     --cell-size: min(4.5dvh, 6.5dvw);
     height: var(--cell-size);
     width: var(--cell-size);
     background-color: black;
     border-radius: 2px;
+}
+
+@media screen and (max-width: 430px) {
+    .grid>div {
+        --cell-size-430: min(27px, 30px);
+        height: var(--cell-size-430);
+        width: var(--cell-size-430);
+    }
 }
 
 .grid>div.ghost {
@@ -122,21 +143,38 @@
     background: rgba(0, 0, 0, 0);
 }
 
-/*--------КНОПКИ/MENU-----------------------------------------------------------*/
+/*--------MENU-INFO-----------------------------------------------------------*/
 .menu {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: space-between;
     height: 100%;
     position: relative;
-    padding: 0 25px;
+    padding: 20px 25px;
+}
+
+@media screen and (max-width: 770px) {
+    .menu {
+        padding: 20px 0 20px 10px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .menu {
+        flex-direction: row;
+        align-items: center;
+        padding: 20px 20px 15px;
+        height: initial;
+        width: 100%;
+        align-self: flex-start;
+        position: initial;
+    }
 }
 
 .menu>.menu-info {
-    position: absolute;
-    top: 3.5%;
     white-space: nowrap;
+    z-index: 9;
 }
 
 .menu-info>h1 {
@@ -144,11 +182,121 @@
     margin-bottom: 25px;
 }
 
+@media screen and (max-width: 770px) {
+    .menu-info>h1 {
+        font-size: 30px;
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .menu-info>h1 {
+        display: none;
+    }
+}
+
 .menu-info>p {
     color: #d2d2d2;
     margin-bottom: 20px;
     font-size: 20px;
     margin-left: 5px;
+}
+
+@media screen and (max-width: 770px) {
+    .menu-info>p {
+        font-size: inherit;
+        width: fit-content;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .menu-info>p {
+        display: inline-block;
+        margin-bottom: 0;
+        margin-left: 0;
+    }
+
+    .menu-info>p.level {
+        margin-right: 10px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .menu-info>p {
+        font-size: 14px;
+    }
+
+}
+
+/*----------MENU-BUTTONS----------------------------------------------------------------*/
+.menu-button {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    .menu-button {
+        display: block;
+        width: 25px;
+        height: 25px;
+        border-radius: 5px;
+        border: 3px ridge #d2d2d2;
+        background: rgb(40 45 27);
+        position: relative;
+        z-index: 99999;
+    }
+
+    .menu-button>span:first-child {
+        width: 16px;
+        height: 3px;
+        background: #d2d2d2;
+        position: absolute;
+        top: 42%;
+        left: -1.5px;
+        transform: rotate(90deg);
+        transition: transform 0.4s ease;
+    }
+
+    .menu-button>span:last-child {
+        width: 16px;
+        height: 3px;
+        background: #d2d2d2;
+        position: absolute;
+        top: 42%;
+        right: -1.5px;
+        transform: rotate(90deg);
+        transition: transform 0.4s ease;
+    }
+
+    .menu-button.open>span:first-child {
+        transform: rotate(135deg) translate(-3px, -2px);
+    }
+
+    .menu-button.open>span:last-child {
+        transform: rotate(45deg) translate(-3.1px, 2px);
+    }
+
+}
+
+.menu>.buttons {
+    position: absolute;
+    top: 40%;
+    display: block;
+}
+
+@media screen and (max-width: 600px) {
+    .menu > .buttons {
+        display: none;
+    }
+
+    .menu>.buttons.open {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        z-index: 99999;
+        top: 35%;
+        left: 0;
+    }
 }
 
 .buttons > button {
@@ -167,6 +315,22 @@
     transition: background 0.3s ease, border 0.2s ease, color 0.3s ease;
 }
 
+@media screen and (max-width: 770px) {
+    .buttons > button {
+        width: 160px;
+        height: 45px;
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .buttons > button {
+        font-size: 14px;
+        width: 160px;
+        height: 45px;
+    }
+}
+
 .buttons > button:hover {
     background: rgb(0, 0, 0);
 }
@@ -182,6 +346,13 @@
 .buttons > button:not(:last-child) {
     margin-bottom: 15px;
 }
+
+@media screen and (max-width: 600px) {
+    .buttons > button:not(:last-child) {
+        margin-bottom: 25px;
+    }
+}
+
 
 #ghost.shadow-on {
     background: rgb(0, 0, 0);
@@ -201,8 +372,37 @@
     margin-left: 10px;
 }
 
+@media screen and (max-width: 600px) {}
+.count>span,
+.level>span {
+    margin-left: 5px;
+}
+
 #addedPoints {
     margin-left: 18px;
     opacity: 0;
     transition: opacity 0.6s ease;
 }
+
+@media screen and (max-width: 770px) {
+    #addedPoints {
+        margin-left: 10px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #addedPoints {
+        display: none;
+    }
+}
+/*----------MOBILE MENU----------------------------------------------------------------------*/
+@media screen and (max-width: 600px) {
+    .background-menu.open {
+        background-color: rgba(0, 0, 0, 0.9);
+        width: 100dvw;
+        height: 100dvh;
+        position: absolute;
+        z-index: 9999;
+    }
+}
+

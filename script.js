@@ -262,5 +262,22 @@ restart.onclick = () => {
     window.location.reload();
 }
 
-//-----------------------------------------------------------------------------------
+//-------functions for mobile version------------------------------------------------
+const menuButton = document.querySelector('.menu-button');
+const backgroundMenu = document.querySelector('.background-menu');
+const buttons = document.querySelector('.buttons');
 
+menuButton.onclick = () => {
+    menuButton.classList.toggle('open');
+    backgroundMenu.classList.toggle('open');
+    buttons.classList.toggle('open');
+
+    stopLoop();
+}
+
+if (window.innerWidth <= 600) {
+    start.onclick = () => {
+        backgroundMenu.classList.remove('open');
+        buttons.classList.remove('open');
+    }
+}

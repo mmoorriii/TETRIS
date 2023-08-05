@@ -68,9 +68,21 @@
     text-align: center;
 }
 
+.grid>.restart {
+    display: none;
+}
+
 @media screen and (max-width: 600px) {
     .grid.game-over::after {
         font-size: 20px;
+    }
+    
+    .grid.game-over>.restart {
+        display: block;
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 
@@ -82,7 +94,7 @@
     border-radius: 2px;
 }
 
-@media screen and (max-width: 430px) {
+@media screen and (max-width: 600px) {
     .grid>div {
         --cell-size-430: min(27px, 30px);
         height: var(--cell-size-430);
@@ -299,7 +311,8 @@
     }
 }
 
-.buttons > button {
+.buttons > button,
+.restart {
     display: block;
     width: 210px;
     height: 50px;
@@ -324,7 +337,8 @@
 }
 
 @media screen and (max-width: 600px) {
-    .buttons > button {
+    .buttons > button,
+    .restart {
         font-size: 14px;
         width: 160px;
         height: 45px;

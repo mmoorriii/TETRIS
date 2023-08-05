@@ -32,23 +32,31 @@ let stateGame = false;
 function startGame () {
     start.addEventListener('click', () => {
         if (!stateGame) {
-            allowMoveDown = true;
+            stateStartGame();
             moveDown();
-            stateGame = true;
-            start.innerHTML = 'STOP';
-            allowMoveLeft = true;
-            allowMoveRight = true;
-            allowMoveRotate = true;
         } else {
-            allowMoveDown = false;
+            stateStopGame();
             stopLoop();
-            stateGame = false;
-            start.innerHTML = 'START';
-            allowMoveLeft = false;
-            allowMoveRight = false;
-            allowMoveRotate = false;
         }
     })
+}
+
+function stateStartGame() {
+    allowMoveDown = true;
+    allowMoveLeft = true;
+    allowMoveRight = true;
+    allowMoveRotate = true;
+    stateGame = true;
+    start.innerHTML = 'STOP';
+}
+
+function stateStopGame() {
+    allowMoveDown = false;
+    allowMoveLeft = false;
+    allowMoveRight = false;
+    allowMoveRotate = false;
+    stateGame = false;
+    start.innerHTML = 'START';
 }
 
 //-------уровень--------------------------------------------------------------------------------
@@ -256,7 +264,7 @@ function gameOver () {
 }
 
 //-------------------------------------------------------------------------
-const restart = document.getElementById('restart');
+const restart = document.querySelector('.restart');
 
 restart.onclick = () => {
     window.location.reload();
@@ -267,16 +275,37 @@ const menuButton = document.querySelector('.menu-button');
 const backgroundMenu = document.querySelector('.background-menu');
 const buttons = document.querySelector('.buttons');
 
-menuButton.onclick = () => {
-    menuButton.classList.toggle('open');
-    backgroundMenu.classList.toggle('open');
-    buttons.classList.toggle('open');
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    stopLoop();
+async function countdown() {
+    console.log(2);
+    await delay(1000);
+
+    console.log(1);
+    await delay(1000);
+
+    stateStartGame();
+    moveDown();
 }
 
+
 if (window.innerWidth <= 600) {
+    menuButton.onclick = () => {
+        menuButton.classList.toggle('open');
+        backgroundMenu.classList.toggle('open');
+        buttons.classList.toggle('open');
+
+        if (menuButton.classList.contains('open')) {
+            stateStopGame();
+            stopLoop();
+        } else {
+            countdown();
+            stateStartGame();
+        }
+    }
+
     start.onclick = () => {
+        menuButton.classList.remove('open');
         backgroundMenu.classList.remove('open');
         buttons.classList.remove('open');
     }

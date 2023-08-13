@@ -125,7 +125,7 @@ function addedPointsStyle () {
 //--управление------------------------------------------------------------------------------------
 function initKeydown() {
     document.addEventListener('keydown', onKeydown);
-    onPointer();
+    // onPointer();
 }
 
 function onKeydown(event) {
@@ -150,42 +150,42 @@ function onKeydown(event) {
 }
 
 
-function onPointer () {
-    document.ondragstart = () => false;
-
-    // let currentLocationTetromino = tetromino.column;
-    //
-    // document.onpointermove = () => {
-    //     if (currentLocationTetromino > tetromino.column) moveLeft();
-    //     if (currentLocationTetromino < tetromino.column) moveRight();
-    // }
-
-    let startingX = null; // Начальная позиция свайпа
-
-    document.addEventListener('touchstart', (e) => {
-        startingX = e.touches[0].clientX; // Запоминаем начальную позицию свайпа
-    });
-
-    document.onpointermove = (e) => {
-        if (startingX === null) return; // Не выполняем ничего, если начальная позиция не установлена
-
-        const currentX = e.touches[0].clientX;
-        const deltaX = currentX - startingX;
-
-        if (deltaX > 10) { // Здесь вы можете настроить чувствительность свайпа
-            moveRight();
-        } else if (deltaX < -10) {
-            moveLeft();
-        }
-
-        startingX = null; // Сбрасываем начальную позицию после выполнения действия
-    }
-
-
-    document.onpointerdown = () => {
-        rotate();
-    }
-}
+// function onPointer () {
+//     document.ondragstart = () => false;
+//
+//     // let currentLocationTetromino = tetromino.column;
+//     //
+//     // document.onpointermove = () => {
+//     //     if (currentLocationTetromino > tetromino.column) moveLeft();
+//     //     if (currentLocationTetromino < tetromino.column) moveRight();
+//     // }
+//
+//     let startingX = null; // Начальная позиция свайпа
+//
+//     document.addEventListener('touchstart', (e) => {
+//         startingX = e.touches[0].clientX; // Запоминаем начальную позицию свайпа
+//     });
+//
+//     document.onpointermove = (e) => {
+//         if (startingX === null) return; // Не выполняем ничего, если начальная позиция не установлена
+//
+//         const currentX = e.touches[0].clientX;
+//         const deltaX = currentX - startingX;
+//
+//         if (deltaX > 10) { // Здесь вы можете настроить чувствительность свайпа
+//             moveRight();
+//         } else if (deltaX < -10) {
+//             moveLeft();
+//         }
+//
+//         startingX = null; // Сбрасываем начальную позицию после выполнения действия
+//     }
+//
+//
+//     document.onpointerdown = () => {
+//         rotate();
+//     }
+// }
 
 
 function moveDown() {
@@ -315,20 +315,6 @@ const menuButton = document.querySelector('.menu-button');
 const backgroundMenu = document.querySelector('.background-menu');
 const buttons = document.querySelector('.buttons');
 const startNewGame = document.querySelector('.new-start');
-
-// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-//
-// async function countdown() {
-//     console.log(2);
-//     await delay(1000);
-//
-//     console.log(1);
-//     await delay(1000);
-//
-//     stateStartGame();
-//     moveDown();
-// }
-
 
 if (window.innerWidth <= 600) {
     menuButton.onclick = () => {

@@ -304,7 +304,7 @@ function gameOver () {
 }
 
 //-------------------------------------------------------------------------
-const restart = document.querySelector('.restart');
+const restart = document.getElementById('restart');
 
 restart.onclick = () => {
     window.location.reload();

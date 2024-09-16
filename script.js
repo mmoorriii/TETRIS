@@ -74,7 +74,7 @@ export function updateLevel () {
         if (baseDelay > 300) baseDelay -= 50;
     }
 
-    levelElement.innerHTML = level;
+    levelElement.innerHTML = String(level);
 }
 
 //-------счет--------------------------------------------------------------------------------
